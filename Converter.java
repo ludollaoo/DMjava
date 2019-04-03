@@ -5,6 +5,7 @@ import java.awt.event.*;
 public class Converter extends JFrame{
 
 	private double taux;
+	private JTextField jtftaux, jtfdollar, jtfeuro;
 
 	public Converter(){
 
@@ -15,10 +16,20 @@ public class Converter extends JFrame{
 		this.setLayout(new BorderLayout());
 
 
-		JTextField jtfeuro = new JTextField(7);
+		jtfeuro = new JTextField(7);
+		jtfeuro.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				convertEuroToDollar();
+			}
+		});
 		JLabel jleuro = new JLabel("€");
 		JLabel jlfleche = new JLabel("=>");
-		JTextField jtfdollar = new JTextField(7);
+		jtfdollar = new JTextField(7);
+		jtfdollar.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				convertDollarToEuro();
+			}
+		});
 		JLabel jldollar = new JLabel("$");
 
 		JPanel jpconverter = new JPanel();
@@ -29,7 +40,13 @@ public class Converter extends JFrame{
 		jpconverter.add(jldollar);
 
 		JLabel jltaux = new JLabel("TAUX: 1 € =");
-		JTextField jtftaux = new JTextField("1", 5);
+		jtftaux = new JTextField("1", 5);
+		jtftaux.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				changeTaux();
+				System.out.println("Le nouveau taux est de " + getTaux());
+			}
+		});
 		JLabel jldollar2 = new JLabel("$");
 
 		JPanel jptaux = new JPanel();
@@ -62,5 +79,26 @@ public class Converter extends JFrame{
 
 	public void setTaux(double t){
 		this.taux = t;
+	}
+
+	public double getTaux(){
+		return this.taux;
+	}
+
+	public void changeTaux(){
+		double newTaux = Double.parseDouble(jtftaux.getText());
+		this.setTaux(newTaux);
+	}
+
+	public void convertEuroToDollar(){
+		double euro = Double.parseDouble(jtfeuro.getText());
+		double dollar = toDollars(euro);
+		jtfdollar.setText(Double.toString(dollar));
+	}
+
+	public void convertDollarToEuro(){
+		double dollar = Double.parseDouble(jtfdollar.getText());
+		double euro = toEuros(dollar);
+		jtfeuro.setText(Double.toString(euro));
 	}
 }
