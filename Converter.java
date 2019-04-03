@@ -5,6 +5,7 @@ import java.awt.event.*;
 public class Converter extends JFrame{
 
 	private double taux;
+	private JLabel jlsens;
 	private JTextField jtftaux, jtfdollar, jtfeuro;
 
 	public Converter(){
@@ -15,6 +16,8 @@ public class Converter extends JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 
+		JOptionPane jopexception = new JOptionPane();
+		this.add(jopexception);
 
 		jtfeuro = new JTextField(7);
 		jtfeuro.addActionListener(new ActionListener(){
@@ -23,7 +26,7 @@ public class Converter extends JFrame{
 			}
 		});
 		JLabel jleuro = new JLabel("€");
-		JLabel jlfleche = new JLabel("=>");
+		JLabel jlsens = new JLabel("<=>");
 		jtfdollar = new JTextField(7);
 		jtfdollar.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -35,7 +38,7 @@ public class Converter extends JFrame{
 		JPanel jpconverter = new JPanel();
 		jpconverter.add(jtfeuro);
 		jpconverter.add(jleuro);
-		jpconverter.add(jlfleche);
+		jpconverter.add(jlsens);
 		jpconverter.add(jtfdollar);
 		jpconverter.add(jldollar);
 
@@ -77,7 +80,10 @@ public class Converter extends JFrame{
 		return s*(1/this.taux);
 	}
 
-	public void setTaux(double t){
+	public void setTaux(double t) throws TauxNegatifException{
+		if(t <= 0){
+			throw new TauxNegatifException();
+		}
 		this.taux = t;
 	}
 
@@ -86,19 +92,40 @@ public class Converter extends JFrame{
 	}
 
 	public void changeTaux(){
-		double newTaux = Double.parseDouble(jtftaux.getText());
-		this.setTaux(newTaux);
+		double newTaux = 1;
+		try{
+			newTaux = Double.parseDouble(jtftaux.getText());
+		}catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, "Erreur de format", "Erreur", JOptionPane.ERROR_MESSAGE);
+		}
+		try{
+			this.setTaux(newTaux);
+		}catch(TauxNegatifException e){
+			JOptionPane.showMessageDialog(null, "Taux négatif", "Erreur", JOptionPane.ERROR_MESSAGE); 
+		}
 	}
 
 	public void convertEuroToDollar(){
-		double euro = Double.parseDouble(jtfeuro.getText());
+		double euro = -1;
+		try{
+			euro = Double.parseDouble(jtfeuro.getText());
+		}catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, "Erreur de format", "Erreur", JOptionPane.ERROR_MESSAGE);
+		}
 		double dollar = toDollars(euro);
 		jtfdollar.setText(Double.toString(dollar));
+		//jlsens.setText("=>");
 	}
 
 	public void convertDollarToEuro(){
-		double dollar = Double.parseDouble(jtfdollar.getText());
+		double dollar = -1;
+		try{
+			dollar = Double.parseDouble(jtfdollar.getText());
+		}catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, "Erreur de format", "Erreur", JOptionPane.ERROR_MESSAGE);
+		}
 		double euro = toEuros(dollar);
 		jtfeuro.setText(Double.toString(euro));
+		//jlsens.setText("<=");
 	}
 }
